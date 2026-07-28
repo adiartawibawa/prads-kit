@@ -1,9 +1,11 @@
-<!-- resources/js/Pages/Users/Edit.vue -->
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3'
-import { update } from '@/routes/users'
+import { Head, Link, useForm } from '@inertiajs/vue3'
+import { Undo2 } from '@lucide/vue';
+import { Button } from '@/components/ui/button';
+import { index, update } from '@/routes/users'
 import UserForm from './UserForm.vue'
 
+// Bentuk data user yang dikirim dari UserController@edit (via UserDetailResource).
 interface UserDetail {
     id: string
     name: string
@@ -16,12 +18,15 @@ const props = defineProps<{
     roles: string[]
 }>()
 
+// Form diisi dari data user yang sudah ada (bukan kosong seperti di Create.vue).
+// Tidak ada field password -> saat edit, password tidak diubah lewat form ini.
 const form = useForm({
     name: props.user.data.name,
     email: props.user.data.email,
     role: props.user.data.role ?? '',
 })
 
+// Submit pakai method PUT (update) ke endpoint /users/{id}, bukan POST seperti create.
 function submit() {
     form.put(update(props.user.data.id).url)
 }
@@ -38,9 +43,17 @@ function submit() {
         </div>
 
         <form @submit.prevent="submit" class="max-w-lg space-y-6 rounded-lg border border-border p-6">
+            <!-- show-password: false -> field password disembunyikan di form edit -->
             <UserForm v-model:form="form" :roles="roles" :show-password="false" />
 
             <div class="flex items-center justify-end gap-3 border-t border-border pt-4">
+                <!-- Catatan: tombol ini belum punya :href/@click, jadi belum benar-benar navigasi kembali -->
+                <Button variant="outline" as-child>
+                    <Link :href="index()" class="flex items-center gap-2">
+                        <Undo2 />
+                        Kembali
+                    </Link>
+                </Button>
                 <Button type="submit" :disabled="form.processing">
                     {{ form.processing ? 'Menyimpan...' : 'Simpan' }}
                 </Button>

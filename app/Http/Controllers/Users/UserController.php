@@ -22,8 +22,13 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller CRUD User. Logika bisnis didelegasikan ke class Action,
+ * controller hanya menangani otorisasi & request/response.
+ */
 class UserController extends Controller
 {
+    /** Daftar user: search, filter role, sort, pagination. */
     public function index(Request $request): Response
     {
         $this->authorize('viewAny', User::class);
@@ -47,6 +52,7 @@ class UserController extends Controller
         ]);
     }
 
+    /** Form tambah user. */
     public function create(): Response
     {
         $this->authorize('create', User::class);
@@ -56,6 +62,7 @@ class UserController extends Controller
         ]);
     }
 
+    /** Simpan user baru (validasi via StoreUserRequest, logika via CreateUser action). */
     public function store(StoreUserRequest $request, CreateUser $action): RedirectResponse
     {
         $action->handle($request->validated());
@@ -63,6 +70,7 @@ class UserController extends Controller
         return to_route('users.index')->with('success', 'User berhasil dibuat.');
     }
 
+    /** Form edit user (route model binding otomatis via $user). */
     public function edit(User $user): Response
     {
         $this->authorize('update', $user);
@@ -73,6 +81,7 @@ class UserController extends Controller
         ]);
     }
 
+    /** Update data user. */
     public function update(UpdateUserRequest $request, User $user, UpdateUser $action): RedirectResponse
     {
         $action->handle($request->user(), $user, $request->validated());
@@ -80,6 +89,7 @@ class UserController extends Controller
         return to_route('users.index')->with('success', 'User berhasil diperbarui.');
     }
 
+    /** Hapus user (soft delete, masih bisa dipulihkan). */
     public function destroy(User $user, DeleteUser $action): RedirectResponse
     {
         $this->authorize('delete', $user);
@@ -89,6 +99,7 @@ class UserController extends Controller
         return to_route('users.index')->with('success', 'User berhasil dihapus.');
     }
 
+    /** Daftar user yang sudah di-soft-delete (tempat sampah). */
     public function trashed(Request $request): Response
     {
         $this->authorize('viewAny', User::class);
@@ -111,6 +122,7 @@ class UserController extends Controller
         ]);
     }
 
+    /** Pulihkan user dari sampah (dicari manual karena route binding default tidak mencakup data trashed). */
     public function restore(int|string $id, RestoreUser $action): RedirectResponse
     {
         $user = User::onlyTrashed()->findOrFail($id);
@@ -122,6 +134,7 @@ class UserController extends Controller
         return back()->with('success', 'User berhasil dipulihkan.');
     }
 
+    /** Hapus user permanen (tidak bisa dipulihkan). */
     public function forceDelete(int|string $id, ForceDeleteUser $action): RedirectResponse
     {
         $user = User::onlyTrashed()->findOrFail($id);
@@ -133,6 +146,7 @@ class UserController extends Controller
         return to_route('users.trashed')->with('success', 'User berhasil dihapus permanen.');
     }
 
+    /** Restore/hapus permanen banyak user sekaligus (synchronous, langsung diproses). */
     public function bulkTrashAction(BulkTrashActionRequest $request, BulkTrashAction $action): RedirectResponse
     {
         $affected = $action->handle(
@@ -148,6 +162,8 @@ class UserController extends Controller
         return back()->with('success', $message);
     }
 
+    // Versi alternatif (nonaktif): sama seperti di atas tapi pakai queue (dispatch),
+    // diproses di background, tidak langsung menunggu selesai.
     // public function bulkTrashAction(BulkTrashActionRequest $request, BulkTrashAction $action): RedirectResponse
     // {
     //     BulkTrashAction::dispatch(
