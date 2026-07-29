@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, Users2 } from '@lucide/vue';
+import { BookOpen, FolderGit2, LayoutGrid, ShieldCheck, Users2 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -15,6 +15,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import roles from '@/routes/roles';
 import users from '@/routes/users';
 import type { NavItem } from '@/types';
 
@@ -29,6 +30,11 @@ const mainNavItems: NavItem[] = [
         title: 'User',
         href: users.index(),
         icon: Users2,
+    },
+    {
+        title: 'Roles & Permissions',
+        href: roles.index(),
+        icon: ShieldCheck,
     },
 ];
 

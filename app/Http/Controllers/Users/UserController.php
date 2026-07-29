@@ -8,10 +8,11 @@ use App\Actions\Users\DeleteUser;
 use App\Actions\Users\ForceDeleteUser;
 use App\Actions\Users\RestoreUser;
 use App\Actions\Users\UpdateUser;
+use App\Actions\Users\UserBulkTrashAction;
 use App\Enums\Role;
 use App\Filters\UserFilters;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Users\BulkTrashActionRequest;
+use App\Http\Requests\BulkTrashActionRequest;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Resources\Users\UserDetailResource;
@@ -147,7 +148,7 @@ class UserController extends Controller
     }
 
     /** Restore/hapus permanen banyak user sekaligus (synchronous, langsung diproses). */
-    public function bulkTrashAction(BulkTrashActionRequest $request, BulkTrashAction $action): RedirectResponse
+    public function bulkTrashAction(BulkTrashActionRequest $request, UserBulkTrashAction $action): RedirectResponse
     {
         $affected = $action->handle(
             $request->user(),

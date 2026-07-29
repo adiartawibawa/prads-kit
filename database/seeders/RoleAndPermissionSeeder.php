@@ -53,8 +53,9 @@ class RoleAndPermissionSeeder extends Seeder
             UserPermission::CREATE->value,
             UserPermission::UPDATE_ANY->value,
             UserPermission::DELETE_ANY->value,
-
+            UserPermission::ASSIGN_ROLE->value,
             RolePermission::VIEW->value,
+            RolePermission::ASSIGN_PERMISSION->value,
         ]);
 
         $editor->givePermissionTo([

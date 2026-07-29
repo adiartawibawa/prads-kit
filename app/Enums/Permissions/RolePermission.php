@@ -8,5 +8,6 @@ enum RolePermission: string
     case CREATE = 'role.create';
     case UPDATE = 'role.update';
     case DELETE = 'role.delete';
+    case ASSIGN_PERMISSION = 'role.assign-permission';
 
 }
